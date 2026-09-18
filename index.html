@@ -34,6 +34,11 @@
   --line-accent:rgba(8,145,178,.20);
   --line-soft:rgba(71,80,105,.12);
   --topbar-h:56px;
+  /* 背景装饰 */
+  --bg-dot:rgba(79,70,229,.08);
+  --bg-arc-a:rgba(79,70,229,.11);
+  --bg-arc-b:rgba(8,145,178,.11);
+  --bg-slash:rgba(71,80,105,.09);
 }
 [data-theme="dark"]{
   --bg:#0a0e17;
@@ -58,6 +63,11 @@
   --line-primary:rgba(129,140,248,.30);
   --line-accent:rgba(34,211,238,.26);
   --line-soft:rgba(168,179,199,.14);
+  /* 背景装饰 */
+  --bg-dot:rgba(129,140,248,.10);
+  --bg-arc-a:rgba(129,140,248,.18);
+  --bg-arc-b:rgba(34,211,238,.15);
+  --bg-slash:rgba(168,179,199,.10);
 }
 
 /* ============ 基础 ============ */
@@ -77,12 +87,15 @@ body{
 }
 body.splash-lock{overflow:hidden;}
 body.lb-open{overflow:hidden;}
+/* 背景：点状网格 + 光晕 */
 body::before{
   content:"";
   position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
+    radial-gradient(circle, var(--bg-dot) 1px, transparent 1.5px) 0 0 / 28px 28px,
     radial-gradient(680px 460px at 8% -4%, var(--glow-1), transparent 70%),
-    radial-gradient(760px 520px at 96% 6%, var(--glow-2), transparent 70%);
+    radial-gradient(760px 520px at 96% 6%, var(--glow-2), transparent 70%),
+    radial-gradient(900px 720px at 50% 112%, var(--glow-1), transparent 72%);
   transition:background .3s ease;
 }
 img,svg{display:block;max-width:100%;}
@@ -90,6 +103,43 @@ a{color:inherit;text-decoration:none;}
 button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
 ul{margin:0;padding:0;list-style:none;}
 h1,h2,h3,h4,p{margin:0;}
+
+/* ============ 背景装饰弧线 ============ */
+.bg-deco{
+  position:fixed;inset:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:0;
+  transition:opacity .3s ease;
+}
+.bg-deco circle{
+  fill:none;
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+}
+.bg-arc-a circle{stroke:var(--bg-arc-a);}
+.bg-arc-a circle:nth-child(1){opacity:.95;}
+.bg-arc-a circle:nth-child(2){opacity:.70;}
+.bg-arc-a circle:nth-child(3){opacity:.48;}
+.bg-arc-a circle:nth-child(4){opacity:.28;}
+.bg-arc-b circle{stroke:var(--bg-arc-b);}
+.bg-arc-b circle:nth-child(1){opacity:.85;}
+.bg-arc-b circle:nth-child(2){opacity:.55;}
+.bg-arc-b circle:nth-child(3){opacity:.30;}
+.bg-slash{
+  stroke:var(--bg-slash);
+  stroke-width:.8;
+  vector-effect:non-scaling-stroke;
+}
+.bg-dot{
+  fill:var(--bg-arc-b);
+  stroke:none;
+  opacity:.5;
+}
+.bg-dot.bg-dot-a{
+  fill:var(--bg-arc-a);
+  opacity:.6;
+}
 
 /* ============ View Transitions ============ */
 ::view-transition-old(root),
@@ -452,7 +502,6 @@ main{position:relative;z-index:1;}
 .btn-ghost:hover{transform:translateY(-2px);color:var(--primary);border-color:var(--primary);background:var(--primary-soft);}
 .btn:active{transform:translateY(0);}
 
-/* 联系信息按钮（点击复制）：字体等宽，避免数字排版跳动 */
 .btn-contact{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   letter-spacing:.4px;
@@ -866,6 +915,8 @@ main{position:relative;z-index:1;}
   .lb-close{top:14px;right:16px;width:40px;height:40px;}
   .lb-caption{bottom:16px;font-size:12px;}
   .btn{padding:8px 14px;font-size:13px;}
+  body::before{background-size:22px 22px;}
+  .bg-deco{opacity:.75;}
 }
 @media (max-width:420px){
   .hero h1{letter-spacing:1px;}
@@ -891,6 +942,7 @@ main{position:relative;z-index:1;}
   html,body{background:#fff !important;color:#000 !important;}
   body{font-size:10.5pt;line-height:1.55;overflow:visible !important;}
   body::before{display:none !important;}
+  .bg-deco{display:none !important;}
   .topbar,#toTop,#toast,.no-print,#splash,#lightbox{display:none !important;}
   .wrap{max-width:100%;padding:0;}
   .section{padding:14px 0 4px;break-inside:avoid;}
@@ -939,6 +991,28 @@ main{position:relative;z-index:1;}
 </style>
 </head>
 <body>
+
+<!-- ============ 背景装饰弧线 ============ -->
+<svg class="bg-deco no-print" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <g class="bg-arc-a">
+    <circle cx="1330" cy="130" r="170"/>
+    <circle cx="1330" cy="130" r="245"/>
+    <circle cx="1330" cy="130" r="325"/>
+    <circle cx="1330" cy="130" r="415"/>
+  </g>
+  <g class="bg-arc-b">
+    <circle cx="110" cy="800" r="190"/>
+    <circle cx="110" cy="800" r="285"/>
+    <circle cx="110" cy="800" r="380"/>
+  </g>
+  <line class="bg-slash" x1="-60" y1="200" x2="1500" y2="60"/>
+  <line class="bg-slash" x1="-60" y1="720" x2="1500" y2="580"/>
+  <circle class="bg-dot bg-dot-a" cx="230" cy="220" r="2.5"/>
+  <circle class="bg-dot"         cx="1210" cy="330" r="2"/>
+  <circle class="bg-dot bg-dot-a" cx="1080" cy="720" r="2.5"/>
+  <circle class="bg-dot"         cx="360" cy="640" r="2"/>
+  <circle class="bg-dot"         cx="720" cy="120" r="1.8"/>
+</svg>
 
 <!-- JS 失效时隐藏启动页，直接展示简历 -->
 <noscript><style>#splash{display:none !important;} body.splash-lock{overflow:auto !important;}</style></noscript>
@@ -1068,7 +1142,7 @@ main{position:relative;z-index:1;}
             <span>男</span><span>湖北 · 武汉</span><span>共青团员</span><span>南京信息工程大学 · 地理信息科学</span>
           </p>
           <p class="hero-summary">
-            地理信息科学本科在读，高中阶段<b>年级排名前 20%</b>，数学与物理成绩多次靠前。具备扎实的数据思维与视觉表达能力：熟练使用剪映完成从拍摄到成片的完整流程，擅长 PPT 设计与活动策划，能独立推动项目从 0 到 1 落地。高中阶段担任<b>数学课代表</b>与<b>校学生会成员</b>，主导班级话剧比赛获<b>第一名</b>，服务同学 50+ 名、每周巡查覆盖 9 个班级。习惯用结构化思维拆解问题，以执行力交付可衡量的结果。
+            地理信息科学本科在读，高中阶段<b>年级排名前 20%</b>，数学与物理成绩多次靠前。具备扎实的数据思维与视觉表达能力：熟练使用剪映完成从拍摄到成片的完整流程，擅长 PPT 设计与活动策划，能独立推动项目从 0 到 1 落地。高中阶段担任<b>数学课代表</b>与<b>校学生会成员</b>，主导班级话剧比赛获<b>第一名</b>，服务同学 50+ 名、每周巡查覆盖 9 个班级。进入大学后当选<b>双创委员兼组织委员</b>，负责班级创新创业与组织协调工作。习惯用结构化思维拆解问题，以执行力交付可衡量的结果。
           </p>
           <div class="badge-row" id="heroBadges"></div>
           <div class="hero-actions" id="heroActions"></div>
@@ -1084,6 +1158,7 @@ main{position:relative;z-index:1;}
             <div class="fact-list">
               <div class="fact"><span class="k">学 历</span><span class="v">本科在读 · 2026.09 入学</span></div>
               <div class="fact"><span class="k">专 业</span><span class="v">地理信息科学</span></div>
+              <div class="fact"><span class="k">职 务</span><span class="v">双创委员兼组织委员</span></div>
               <div class="fact"><span class="k">排 名</span><span class="v">高中年级前 20%</span></div>
               <div class="fact"><span class="k">特 长</span><span class="v">视频剪辑 · PPT 设计 · 活动策划</span></div>
               <div class="fact"><span class="k">证 书</span><span class="v">动漫七级 · 速写七级 · 英语口语三级</span></div>
@@ -1108,7 +1183,7 @@ main{position:relative;z-index:1;}
     <div class="wrap">
       <div class="section-head">
         <h2>经历</h2>
-        <span class="sub">校园任职 · 宣传创作 · 公益志愿</span>
+        <span class="sub">大学任职 · 校园任职 · 宣传创作 · 公益志愿</span>
       </div>
       <div id="expTabs"></div>
     </div>
@@ -1208,14 +1283,32 @@ main{position:relative;z-index:1;}
       "数据整理", "团队协作", "美术与视觉表达", "英语口语三级"
     ],
     highlights: [
+      { value: "双创+组织", label: "大学班委职务", desc: "当选双创委员兼组织委员，负责双创与组织协调" },
       { value: "前 20%", label: "高中年级排名", desc: "数学、物理成绩多次排名靠前" },
       { value: "90", suffix: "%", label: "作业按时提交率", desc: "建立提醒与反馈机制，漏交迟交减少 90%" },
       { value: "5–10", suffix: "分", label: "班级数学平均分提升", desc: "组织互助答疑 10 次，服务 50+ 名同学" },
       { value: "9", suffix: "个班", label: "每周巡查覆盖", desc: "校学生会纪律检查，按周巡查 2 次" },
-      { value: "90", suffix: "+", label: "运动会影像产出", desc: "80+ 张照片、10+ 条视频、2 条宣传视频" },
       { value: "第一", label: "班级话剧比赛", desc: "主导剧本修改与 PPT 制作，组织排练 10 余次" }
     ],
     experience: [
+      {
+        id: "exp-univ",
+        label: "大学任职",
+        items: [
+          {
+            org: "南京信息工程大学 · 班级",
+            role: "双创委员兼组织委员",
+            time: "2026.09 – 至今",
+            tags: ["创新创业", "组织协调", "班级建设"],
+            points: [
+              "通过班级竞选当选双创委员兼组织委员，负责班级创新创业与组织协调工作。",
+              "统筹班级创新创业活动，对接院校双创赛事信息，推动同学参与项目申报与竞赛。",
+              "协助班委组织班会、团建与集体活动，协调人员分工与现场执行。",
+              "建立班级活动通知与反馈机制，提升信息传达效率与同学参与度。"
+            ]
+          }
+        ]
+      },
       {
         id: "exp-campus",
         label: "校园任职",
@@ -1379,6 +1472,7 @@ main{position:relative;z-index:1;}
         group: "组织与执行",
         icon: "组",
         items: [
+          { name: "创新创业活动组织", level: 80 },
           { name: "活动策划与现场协调", level: 90 },
           { name: "团队协作与纪律检查", level: 92 },
           { name: "任务跟进与反馈机制搭建", level: 85 }
@@ -1390,7 +1484,7 @@ main{position:relative;z-index:1;}
         school: "南京信息工程大学",
         major: "地理信息科学 · 本科",
         time: "2026.09 – 至今",
-        desc: "本科在读。发展方向：遥感应用、数据可视化、互联网运营 / 人工智能。"
+        desc: "本科在读，班级双创委员兼组织委员。发展方向：遥感应用、数据可视化、互联网运营 / 人工智能。"
       },
       {
         school: "武汉市江夏区第一中学",
@@ -1418,6 +1512,7 @@ main{position:relative;z-index:1;}
         cap: "「中国梦」全国艺术特长优秀作品展示一等奖证书"
       },
       { text: "<b>动漫七级、速写七级</b>考级证书（证书稍后提供核验）" },
+      { text: "<b>大学班级双创委员兼组织委员</b>（2026 竞选当选）" },
       { text: "<b>高中班级话剧比赛第一名</b>（2025）" },
       { text: "<b>多次获年级三好学生、校级优秀学生</b>、学习标兵" },
       { text: "<b>湖北省英语口语三级</b>证书" },
@@ -1752,7 +1847,6 @@ main{position:relative;z-index:1;}
 
     const actions = document.getElementById("heroActions");
 
-    // 电话：主色背景，直接展示号码，点击复制
     const telBtn = h("button", {
       class: "btn btn-primary btn-contact",
       type: "button",
@@ -1764,7 +1858,6 @@ main{position:relative;z-index:1;}
     });
     actions.append(telBtn);
 
-    // 邮箱：主色背景，直接展示地址，点击复制
     const mailBtn = h("button", {
       class: "btn btn-primary btn-contact",
       type: "button",
@@ -1776,7 +1869,6 @@ main{position:relative;z-index:1;}
     });
     actions.append(mailBtn);
 
-    // GitHub：新窗口打开
     const ghBtn = h("a", {
       class: "btn btn-ghost btn-contact",
       href: resume.contacts.githubUrl,
@@ -1787,13 +1879,11 @@ main{position:relative;z-index:1;}
     }, svgSpan(ICONS.github), resume.contacts.github);
     actions.append(ghBtn);
 
-    // 导出 PDF
     const printBtn = h("button", { class: "btn btn-ghost", type: "button" },
       svgSpan(ICONS.print), "导出 PDF");
     printBtn.addEventListener("click", function () { window.print(); });
     actions.append(printBtn);
 
-    // 联系方式侧边卡片
     const list = document.getElementById("contactList");
     list.append(
       h("div", { class: "fact" },
